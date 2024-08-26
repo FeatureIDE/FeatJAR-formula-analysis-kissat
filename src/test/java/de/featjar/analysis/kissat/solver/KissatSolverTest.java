@@ -50,20 +50,19 @@ public class KissatSolverTest extends Common {
         final And and = new And(equals, c);
         final Implies formula = new Implies(or, and);
 
-        checkSolution(formula, 3);
+        checkSolution(formula);
     }
 
     @Test
     public void gplHasSolution() {
         IFormula formula = loadFormula("testFeatureModels/gpl_medium_model.xml");
-        checkSolution(formula, 960);
+        checkSolution(formula);
     }
 
-    private void checkSolution(final IFormula formula, int count) {
+    private void checkSolution(final IFormula formula) {
         IFormula cnf = formula.toCNF().orElseThrow();
         final Result<BooleanSolution> result =
                 Computations.of(cnf).map(ComputeGetSolutionKissat::new).computeResult();
         assertTrue(result.isPresent(), result::printProblems);
-        // TODO implement compare
     }
 }
