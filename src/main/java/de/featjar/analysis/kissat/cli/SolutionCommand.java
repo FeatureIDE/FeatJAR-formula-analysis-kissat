@@ -41,7 +41,7 @@ public class SolutionCommand extends AKissatAnalysisCommand<BooleanSolution, Boo
     }
 
     @Override
-    public String serializeResult(BooleanSolution assignment) {
+    public String printResult(BooleanSolution assignment) {
         return assignment.print();
     }
 
