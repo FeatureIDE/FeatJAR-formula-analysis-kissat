@@ -23,12 +23,12 @@ package de.featjar.analysis.kissat.computation;
 import de.featjar.base.computation.IComputation;
 import de.featjar.base.computation.Progress;
 import de.featjar.base.data.Result;
+import de.featjar.formula.assignment.BooleanAssignmentList;
 import de.featjar.formula.assignment.BooleanSolution;
-import de.featjar.formula.structure.IFormula;
 import java.util.List;
 
 public class ComputeGetSolutionKissat extends AKissatAnalysis<BooleanSolution> {
-    public ComputeGetSolutionKissat(IComputation<IFormula> cnfFormula) {
+    public ComputeGetSolutionKissat(IComputation<BooleanAssignmentList> cnfFormula) {
         super(cnfFormula);
     }
 

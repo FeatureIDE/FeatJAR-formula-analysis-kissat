@@ -28,6 +28,7 @@ import de.featjar.base.FeatJAR;
 import de.featjar.base.computation.Computations;
 import de.featjar.base.data.Result;
 import de.featjar.formula.assignment.BooleanSolution;
+import de.featjar.formula.assignment.ComputeBooleanClauseList;
 import de.featjar.formula.structure.Expressions;
 import de.featjar.formula.structure.IFormula;
 import de.featjar.formula.structure.connective.And;
@@ -74,8 +75,10 @@ public class KissatSolverTest extends Common {
 
     private void checkSolution(final IFormula formula) {
         IFormula cnf = formula.toCNF().orElseThrow();
-        final Result<BooleanSolution> result =
-                Computations.of(cnf).map(ComputeGetSolutionKissat::new).computeResult();
+        final Result<BooleanSolution> result = Computations.of(cnf)
+                .map(ComputeBooleanClauseList::new)
+                .map(ComputeGetSolutionKissat::new)
+                .computeResult();
         assertTrue(result.isPresent(), result::printProblems);
     }
 }

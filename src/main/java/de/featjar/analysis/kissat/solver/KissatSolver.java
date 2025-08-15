@@ -28,24 +28,24 @@ import de.featjar.base.data.Result;
 import de.featjar.base.env.Process;
 import de.featjar.base.env.TempFile;
 import de.featjar.base.io.IO;
+import de.featjar.formula.assignment.BooleanAssignmentList;
 import de.featjar.formula.assignment.BooleanSolution;
-import de.featjar.formula.io.dimacs.FormulaDimacsFormat;
-import de.featjar.formula.structure.IFormula;
+import de.featjar.formula.io.dimacs.BooleanAssignmentListDimacsFormat;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class KissatSolver implements ISolver {
-    protected final IFormula formula;
+    protected final BooleanAssignmentList formula;
     protected Duration timeout = Duration.ZERO;
     protected boolean isTimeoutOccurred;
 
-    public KissatSolver(IFormula formula) { // todo: use boolean clause list input
+    public KissatSolver(BooleanAssignmentList formula) { // todo: use boolean clause list input
         this.formula = formula;
     }
 
-    public IFormula getFormula() {
+    public BooleanAssignmentList getFormula() {
         return formula;
     }
 
@@ -67,7 +67,7 @@ public class KissatSolver implements ISolver {
         isTimeoutOccurred = false;
         KissatBinary extension = FeatJAR.extension(KissatBinary.class);
         try (TempFile tempFile = new TempFile("kissatInput", ".dimacs")) {
-            IO.save(formula, tempFile.getPath(), new FormulaDimacsFormat());
+            IO.save(formula, tempFile.getPath(), new BooleanAssignmentListDimacsFormat());
             Process process = extension.getProcess("-q", tempFile.getPath().toString());
 
             return process.get().map(this::parseSolution);
@@ -107,7 +107,7 @@ public class KissatSolver implements ISolver {
         isTimeoutOccurred = false;
         KissatBinary extension = FeatJAR.extension(KissatBinary.class);
         try (TempFile tempFile = new TempFile("cadiCalInput", ".dimacs")) {
-            IO.save(formula, tempFile.getPath(), new FormulaDimacsFormat());
+            IO.save(formula, tempFile.getPath(), new BooleanAssignmentListDimacsFormat());
             Process process = extension.getProcess(
                     "--sat",
                     "-q",

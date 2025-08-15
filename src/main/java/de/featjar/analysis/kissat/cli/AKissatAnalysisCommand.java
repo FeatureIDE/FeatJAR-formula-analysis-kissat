@@ -26,12 +26,15 @@ import de.featjar.base.cli.OptionList;
 import de.featjar.base.computation.Computations;
 import de.featjar.base.computation.IComputation;
 import de.featjar.base.io.IO;
+import de.featjar.formula.VariableMap;
+import de.featjar.formula.assignment.BooleanAssignmentList;
+import de.featjar.formula.assignment.ComputeBooleanClauseList;
 import de.featjar.formula.computation.ComputeCNFFormula;
 import de.featjar.formula.computation.ComputeNNFFormula;
 import de.featjar.formula.io.FormulaFormats;
 import de.featjar.formula.structure.IFormula;
 
-public abstract class AKissatAnalysisCommand<T, U> extends AAnalysisCommand<T> {
+public abstract class AKissatAnalysisCommand<T> extends AAnalysisCommand<T> {
 
     /**
      * Option for setting the seed for the pseudo random generator.
@@ -41,6 +44,7 @@ public abstract class AKissatAnalysisCommand<T, U> extends AAnalysisCommand<T> {
             .setDefaultValue(1L);
 
     protected IFormula inputFormula;
+    protected VariableMap variableMap;
 
     @Override
     protected IComputation<T> newComputation(OptionList optionParser) {
@@ -50,8 +54,14 @@ public abstract class AKissatAnalysisCommand<T, U> extends AAnalysisCommand<T> {
                 .orElseThrow();
         return newAnalysis(
                 optionParser,
-                Computations.of(inputFormula).map(ComputeNNFFormula::new).map(ComputeCNFFormula::new));
+                Computations.of(inputFormula)
+                        .map(ComputeNNFFormula::new)
+                        .map(ComputeCNFFormula::new)
+                        .map(ComputeBooleanClauseList::new)
+                        .peekResult(
+                                getClass(), "variableMap", clauseList -> variableMap = clauseList.getVariableMap()));
     }
 
-    protected abstract IComputation<T> newAnalysis(OptionList optionParser, IComputation<IFormula> formula);
+    protected abstract IComputation<T> newAnalysis(
+            OptionList optionParser, IComputation<BooleanAssignmentList> formula);
 }

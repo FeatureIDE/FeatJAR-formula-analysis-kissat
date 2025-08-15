@@ -23,12 +23,13 @@ package de.featjar.analysis.kissat.cli;
 import de.featjar.analysis.kissat.computation.ComputeGetSolutionKissat;
 import de.featjar.base.cli.OptionList;
 import de.featjar.base.computation.IComputation;
-import de.featjar.formula.assignment.BooleanAssignment;
-import de.featjar.formula.assignment.BooleanSolution;
-import de.featjar.formula.structure.IFormula;
+import de.featjar.base.io.format.IFormat;
+import de.featjar.formula.assignment.BooleanAssignmentGroups;
+import de.featjar.formula.assignment.BooleanAssignmentList;
+import de.featjar.formula.io.csv.BooleanAssignmentGroupsUngroupedCSVFormat;
 import java.util.Optional;
 
-public class SolutionCommand extends AKissatAnalysisCommand<BooleanSolution, BooleanAssignment> {
+public class SolutionCommand extends AKissatAnalysisCommand<BooleanAssignmentGroups> {
 
     @Override
     public Optional<String> getDescription() {
@@ -36,13 +37,15 @@ public class SolutionCommand extends AKissatAnalysisCommand<BooleanSolution, Boo
     }
 
     @Override
-    public IComputation<BooleanSolution> newAnalysis(OptionList optionParser, IComputation<IFormula> formula) {
-        return formula.map(ComputeGetSolutionKissat::new);
+    public IComputation<BooleanAssignmentGroups> newAnalysis(
+            OptionList optionParser, IComputation<BooleanAssignmentList> formula) {
+        return formula.map(ComputeGetSolutionKissat::new)
+                .mapResult(SolutionCommand.class, "group", a -> new BooleanAssignmentGroups(variableMap, a));
     }
 
     @Override
-    public String printResult(BooleanSolution assignment) {
-        return assignment.print();
+    protected IFormat<BooleanAssignmentGroups> getOuputFormat(OptionList optionaParser) {
+        return new BooleanAssignmentGroupsUngroupedCSVFormat();
     }
 
     @Override

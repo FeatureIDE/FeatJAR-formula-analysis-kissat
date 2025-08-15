@@ -26,15 +26,16 @@ import de.featjar.base.computation.AComputation;
 import de.featjar.base.computation.Computations;
 import de.featjar.base.computation.Dependency;
 import de.featjar.base.computation.IComputation;
-import de.featjar.formula.structure.IFormula;
+import de.featjar.formula.assignment.BooleanAssignmentList;
 import java.time.Duration;
 import java.util.List;
 
 public abstract class AKissatAnalysis<T> extends AComputation<T> {
-    public static final Dependency<IFormula> FORMULA = Dependency.newDependency(IFormula.class);
+    public static final Dependency<BooleanAssignmentList> FORMULA =
+            Dependency.newDependency(BooleanAssignmentList.class);
     public static final Dependency<Duration> TIMEOUT = Dependency.newDependency(Duration.class);
 
-    public AKissatAnalysis(IComputation<IFormula> formula, Object... dependencies) {
+    public AKissatAnalysis(IComputation<BooleanAssignmentList> formula, Object... dependencies) {
         super(formula, Computations.of(Duration.ZERO), dependencies);
     }
 
@@ -43,7 +44,7 @@ public abstract class AKissatAnalysis<T> extends AComputation<T> {
     }
 
     public KissatSolver initializeSolver(List<Object> dependencyList) {
-        IFormula formula = FORMULA.get(dependencyList);
+        BooleanAssignmentList formula = FORMULA.get(dependencyList);
         Duration timeout = TIMEOUT.get(dependencyList);
         FeatJAR.log().debug("initializing kissat solver");
         FeatJAR.log().debug(formula);
